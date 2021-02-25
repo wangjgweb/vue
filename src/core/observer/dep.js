@@ -64,3 +64,4 @@ export function popTarget () {
   targetStack.pop()
   Dep.target = targetStack[targetStack.length - 1]
 }
+// 增加注释
