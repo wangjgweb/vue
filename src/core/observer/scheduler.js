@@ -164,12 +164,15 @@ function callActivatedHooks (queue) {
 export function queueWatcher (watcher: Watcher) {
   const id = watcher.id
   if (has[id] == null) {
+    // 防止同一个观察者重复入队
     has[id] = true
     if (!flushing) {
+      // flushing标识观察者队列是否开始更新，如果在更新中有新的观察者插入，走else
       queue.push(watcher)
     } else {
       // if already flushing, splice the watcher based on its id
       // if already past its id, it will be run next immediately.
+      // 保证观察者的执行顺序
       let i = queue.length - 1
       while (i > index && queue[i].id > watcher.id) {
         i--
@@ -178,12 +181,14 @@ export function queueWatcher (watcher: Watcher) {
     }
     // queue the flush
     if (!waiting) {
+      // 保证只执行一次  在事件循环中，单次任务只执行一次
       waiting = true
 
       if (process.env.NODE_ENV !== 'production' && !config.async) {
         flushSchedulerQueue()
         return
       }
+      // 相当于setTimeout，在下次事件循环中执行，此时观察者队列本次事件循环中需要添加的观察者已加入完成
       nextTick(flushSchedulerQueue)
     }
   }

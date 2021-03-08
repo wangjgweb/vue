@@ -121,6 +121,7 @@ const builds = {
   },
   // Runtime+compiler development build (Browser)
   'web-full-dev': {
+    // 拼接一个src/platforms/web目录下的路径
     entry: resolve('web/entry-runtime-with-compiler.js'),
     dest: resolve('dist/vue.js'),
     format: 'umd',
@@ -214,6 +215,7 @@ const builds = {
 }
 
 function genConfig (name) {
+  // 根据不同target名，得到不同的配置对象，且该配置对象有相应的配置路径
   const opts = builds[name]
   const config = {
     input: opts.entry,
@@ -262,7 +264,7 @@ function genConfig (name) {
 
   return config
 }
-
+// 如果传入环境变量，得到一个config配置对象，盖配置对象供roll up使用
 if (process.env.TARGET) {
   module.exports = genConfig(process.env.TARGET)
 } else {

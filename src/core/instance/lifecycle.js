@@ -17,7 +17,7 @@ import {
   validateProp,
   invokeWithErrorHandling
 } from '../util/index'
-
+// 保存当前正在渲染的组件的实例，通过该变量，自动给子组件添加parent
 export let activeInstance: any = null
 export let isUpdatingChildComponent: boolean = false
 
@@ -34,10 +34,13 @@ export function initLifecycle (vm: Component) {
 
   // locate first non-abstract parent
   let parent = options.parent
+  // abstract为true指的是抽象组件，不渲染真事dom
   if (parent && !options.abstract) {
     while (parent.$options.abstract && parent.$parent) {
+      // 找到不是抽象组件的父级
       parent = parent.$parent
     }
+    // 将当前实例添加到父级$children数组中
     parent.$children.push(vm)
   }
 
@@ -140,12 +143,12 @@ export function lifecycleMixin (Vue: Class<Component>) {
 
 export function mountComponent (
   vm: Component,
-  el: ?Element,
+  el: ?Element,  //组件模板对的根元素
   hydrating?: boolean
 ): Component {
   vm.$el = el
   if (!vm.$options.render) {
-    vm.$options.render = createEmptyVNode
+    vm.$options.render = createEmptyVNode   //创建空节点
     if (process.env.NODE_ENV !== 'production') {
       /* istanbul ignore if */
       if ((vm.$options.template && vm.$options.template.charAt(0) !== '#') ||
@@ -186,6 +189,7 @@ export function mountComponent (
       measure(`vue ${name} patch`, startTag, endTag)
     }
   } else {
+    // 将虚拟dom挂载到真实dom上
     updateComponent = () => {
       vm._update(vm._render(), hydrating)
     }

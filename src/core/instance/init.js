@@ -35,28 +35,32 @@ export function initMixin (Vue: Class<Component>) {
       // internal component options needs special treatment.
       initInternalComponent(vm, options)
     } else {
+      // 将Vue构造函数options、 入参options、实例options合并，放入实例$options中
       vm.$options = mergeOptions(
-        resolveConstructorOptions(vm.constructor),
+        resolveConstructorOptions(vm.constructor),  //该options包含全局组件、指令、过滤器、_base
         options || {},
         vm
       )
     }
     /* istanbul ignore else */
     if (process.env.NODE_ENV !== 'production') {
+      // 将vm赋值给vm._renderProxy
       initProxy(vm)
     } else {
       vm._renderProxy = vm
     }
     // expose real self
     vm._self = vm
+    // 初始化
     initLifecycle(vm)
+    // 实例对象上添加两个实例属性 _events 和 _hasHookEvent
     initEvents(vm)
     initRender(vm)
     callHook(vm, 'beforeCreate')
     initInjections(vm) // resolve injections before data/props
     initState(vm)
     initProvide(vm) // resolve provide after data/props
-    callHook(vm, 'created')
+    callHook(vm, 'created')   //created中不能访问dom，因为还没有执行$mount
 
     /* istanbul ignore if */
     if (process.env.NODE_ENV !== 'production' && config.performance && mark) {
@@ -89,9 +93,10 @@ export function initInternalComponent (vm: Component, options: InternalComponent
     opts.staticRenderFns = options.staticRenderFns
   }
 }
-
+// 获取vue构造函数的options
 export function resolveConstructorOptions (Ctor: Class<Component>) {
   let options = Ctor.options
+  // 如果该构造函数还有父类，进行相关操作，最终得到构造函数options
   if (Ctor.super) {
     const superOptions = resolveConstructorOptions(Ctor.super)
     const cachedSuperOptions = Ctor.superOptions

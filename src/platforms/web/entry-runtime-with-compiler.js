@@ -1,5 +1,6 @@
 /* @flow */
 
+// 完整版vue入口文件
 import config from 'core/config'
 import { warn, cached } from 'core/util/index'
 import { mark, measure } from 'core/util/perf'
@@ -15,6 +16,7 @@ const idToTemplate = cached(id => {
 })
 
 const mount = Vue.prototype.$mount
+// 重写$mount方法，增加模板编译能力
 Vue.prototype.$mount = function (
   el?: string | Element,
   hydrating?: boolean
@@ -22,6 +24,7 @@ Vue.prototype.$mount = function (
   el = el && query(el)
 
   /* istanbul ignore if */
+  // 如果是body或者html,返回
   if (el === document.body || el === document.documentElement) {
     process.env.NODE_ENV !== 'production' && warn(
       `Do not mount Vue to <html> or <body> - mount to normal elements instead.`
@@ -31,6 +34,7 @@ Vue.prototype.$mount = function (
 
   const options = this.$options
   // resolve template/el and convert to render function
+  // 如果没有传递render, 执行template编译
   if (!options.render) {
     let template = options.template
     if (template) {
@@ -79,6 +83,7 @@ Vue.prototype.$mount = function (
       }
     }
   }
+  // 执行运行时vue mount，将元素挂载到dom
   return mount.call(this, el, hydrating)
 }
 

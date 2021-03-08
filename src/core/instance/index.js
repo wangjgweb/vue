@@ -13,10 +13,14 @@ function Vue (options) {
   }
   this._init(options)
 }
-
+// 给vue实例增加相应成员
+// 在原型上挂载_init方法  该方法在vue实例化时执行 new Vue()
 initMixin(Vue)
+// 在原型上挂载$data/$props
 stateMixin(Vue)
+// 添加事件
 eventsMixin(Vue)
+// _padate/$destroy
 lifecycleMixin(Vue)
 renderMixin(Vue)
 

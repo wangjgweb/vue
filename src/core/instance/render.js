@@ -19,6 +19,7 @@ import { isUpdatingChildComponent } from './lifecycle'
 export function initRender (vm: Component) {
   vm._vnode = null // the root of the child tree
   vm._staticTrees = null // v-once cached trees
+  // 插槽相关实现
   const options = vm.$options
   const parentVnode = vm.$vnode = options._parentVnode // the placeholder node in parent tree
   const renderContext = parentVnode && parentVnode.context
@@ -60,6 +61,7 @@ export function setCurrentRenderingInstance (vm: Component) {
 
 export function renderMixin (Vue: Class<Component>) {
   // install runtime convenience helpers
+  // 在vue构造函数的原型上，增加模板编译相关的方法
   installRenderHelpers(Vue.prototype)
 
   Vue.prototype.$nextTick = function (fn: Function) {

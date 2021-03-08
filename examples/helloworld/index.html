@@ -1,0 +1,60 @@
+<!--
+ * @Date: 2021-03-01 14:23:07
+ * @FilePath: /vue/examples/helloworld/index.html
+ * @Autor: wangjiguang
+ * @LastEditors: Do not edit
+ * @LastEditTime: 2021-03-05 17:43:29
+ * @Description: 
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <script src="../../dist/vue.js"></script>
+</head>
+<body>
+  <div id="app">
+    <p>{{ msg }}</p>
+    <p>{{ obj }}</p>
+    <p>{{ msg }}</p>
+    <!-- {{ hh }} -->
+  </div>
+  <script>
+    // Vue.options.data = function () {
+    //   return {
+    //     msg: 'nihao',
+    //     hh: 'hhh'
+    //   }
+    // }
+   let vm = new Vue({
+      el: '#app',
+      data: {
+        msg: 'hello wrold',
+        obj: '88'
+      },
+      mounted: function () {
+        this.msg = '9999'
+        console.log('1---')
+      }
+    })
+    // var parent = Vue.extend({
+    //   data: function () {
+    //     return {
+    //       kk: 'kk1'
+    //     }
+    //   }
+    // })
+
+    // var child = parent.extend({
+    //   data: function () {
+    //     return {
+    //       child: 'child'
+    //     }
+    //   }
+    // })
+
+  </script>
+</body>
+</html>

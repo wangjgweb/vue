@@ -46,7 +46,7 @@ export function proxy (target: Object, sourceKey: string, key: string) {
 }
 
 export function initState (vm: Component) {
-  vm._watchers = []
+  vm._watchers = []   //存储该组件实例的所有watcher对象
   const opts = vm.$options
   if (opts.props) initProps(vm, opts.props)
   if (opts.methods) initMethods(vm, opts.methods)
@@ -111,6 +111,7 @@ function initProps (vm: Component, propsOptions: Object) {
 
 function initData (vm: Component) {
   let data = vm.$options.data
+  // 此时data大概率是一个函数，合并options时变为函数
   data = vm._data = typeof data === 'function'
     ? getData(data, vm)
     : data || {}
@@ -122,10 +123,12 @@ function initData (vm: Component) {
       vm
     )
   }
+  // 此时data为纯数据对象
   // proxy data on instance
   const keys = Object.keys(data)
   const props = vm.$options.props
   const methods = vm.$options.methods
+  // 防止data中的属性与props、methods中重名
   let i = keys.length
   while (i--) {
     const key = keys[i]
@@ -143,7 +146,8 @@ function initData (vm: Component) {
         `Use prop default value instead.`,
         vm
       )
-    } else if (!isReserved(key)) {
+    } else if (!isReserved(key)) {// 判断是否是保留键
+      // 在 Vue 实例对象上添加代理访问数据对象的同名属性，实际上访问的是vm._data内的属性
       proxy(vm, `_data`, key)
     }
   }
@@ -153,7 +157,7 @@ function initData (vm: Component) {
 
 export function getData (data: Function, vm: Component): any {
   // #7573 disable dep collection when invoking data getters
-  pushTarget()
+  pushTarget()  //防止手机冗余的依赖
   try {
     return data.call(vm, vm)
   } catch (e) {
@@ -336,6 +340,7 @@ export function stateMixin (Vue: Class<Component>) {
       warn(`$props is readonly.`, this)
     }
   }
+  // 设置$data、$props属性，这两个属性分别代理的是_data、_props属性，且都是只读的属性
   Object.defineProperty(Vue.prototype, '$data', dataDef)
   Object.defineProperty(Vue.prototype, '$props', propsDef)
 
