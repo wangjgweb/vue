@@ -115,6 +115,7 @@ export default class Watcher {
       // "touch" every property so they are all tracked as
       // dependencies for deep watching
       if (this.deep) {
+        // 如果实行对象是深度观察
         traverse(value)
       }
       popTarget()  //将当前target弹出，下次属性值改变的时候，会出发get

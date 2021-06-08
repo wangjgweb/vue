@@ -188,6 +188,7 @@ function initComputed (vm: Component, computed: Object) {
 
     if (!isSSR) {
       // create internal watcher for the computed property.
+      // 非服务端渲染，创建一个观察者实例
       watchers[key] = new Watcher(
         vm,
         getter || noop,
@@ -216,7 +217,8 @@ export function defineComputed (
   key: string,
   userDef: Object | Function
 ) {
-  const shouldCache = !isServerRendering()
+  const shouldCache = !isServerRendering()  //非服务端渲染
+  // 设置计算属性的get、set方法
   if (typeof userDef === 'function') {
     sharedPropertyDefinition.get = shouldCache
       ? createComputedGetter(key)
@@ -314,6 +316,7 @@ function createWatcher (
     options = handler
     handler = handler.handler
   }
+  // 使用methods中的同名方法
   if (typeof handler === 'string') {
     handler = vm[handler]
   }
@@ -357,8 +360,10 @@ export function stateMixin (Vue: Class<Component>) {
       return createWatcher(vm, expOrFn, cb, options)
     }
     options = options || {}
-    options.user = true
+    options.user = true   //标识是用户创建的实例对象
+    // 此处的expOrFn是一个key,watcher内会对expOrFn进行判断，如果expOrFn是一个字符串，会对expOrFn进行求值，求值时会出发该属性的getter
     const watcher = new Watcher(vm, expOrFn, cb, options)
+    // 如果属性或者函数被监听后立即执行回调
     if (options.immediate) {
       try {
         cb.call(vm, watcher.value)
@@ -367,6 +372,7 @@ export function stateMixin (Vue: Class<Component>) {
       }
     }
     return function unwatchFn () {
+      // 解除观察者
       watcher.teardown()
     }
   }

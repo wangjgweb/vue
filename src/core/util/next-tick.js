@@ -97,6 +97,9 @@ export function nextTick (cb?: Function, ctx?: Object) {
       _resolve(ctx)
     }
   })
+  // 判断队列是否等待刷新状态
+  // 这样做的目的是在代码中可能会连续多次调用nextTick，此时将所有的回调都放到callbacks数组中，待所有nextTick执行完成后，再执行timerFunc中的微任务
+  // pending的作用是，当有多个nextTick调用时，只执行一次调用微任务的方法
   if (!pending) {
     pending = true
     timerFunc()

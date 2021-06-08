@@ -3,7 +3,7 @@
  * @FilePath: /vue/examples/helloworld/index.html
  * @Autor: wangjiguang
  * @LastEditors: Do not edit
- * @LastEditTime: 2021-03-05 17:43:29
+ * @LastEditTime: 2021-03-19 14:39:25
  * @Description: 
 -->
 <!DOCTYPE html>
@@ -19,6 +19,9 @@
     <p>{{ msg }}</p>
     <p>{{ obj }}</p>
     <p>{{ msg }}</p>
+    <button-counter :prop-title="msg"></button-counter>
+    <date-picker class="date-picker" data-status="activated" @change="submitChange"></date-picker>
+    <custom-form @onsub="submitChange"></custom-form>
     <!-- {{ hh }} -->
   </div>
   <script>
@@ -27,18 +30,70 @@
     //     msg: 'nihao',
     //     hh: 'hhh'
     //   }
-    // }
+    // 
+  Vue.component('custom-form', {
+    template: `<div @click="clickbtn">hhh</div>`,
+    emits: ['onsub'],
+    mounted () {
+      this.$emit('onsub')
+    },
+    methods: {
+      clickbtn () {
+        console.log('777')
+        // this.$emit('onsub')
+      }
+    }
+  })
+  Vue.component('date-picker', {
+    inheritAttrs: false,
+    template: `
+        <select class="select">
+          <option value="1" v-bind="$attrs">Yesterday</option>
+          <option value="2">Today</option>
+          <option value="3">Tomorrow</option>
+        </select>
+    `,
+    created () {
+      console.log(this.$attrs)
+    }
+  })
+  Vue.component('button-counter', {
+    props: ['propTitle'],
+    data: function () {
+      return {
+        count: 0
+      }
+    },
+    mounted: function () {
+      console.log('0000000-----', this)
+    },
+    template: '<button v-on:click="count++">You clicked me {{ count }} times.{{ propTitle }}</button>'
+  })
    let vm = new Vue({
       el: '#app',
       data: {
         msg: 'hello wrold',
         obj: '88'
       },
+      watch: {
+        msg: function () {
+          // console.log('-----------')
+        }
+      },
       mounted: function () {
+        console.log('100-----')
         this.msg = '9999'
-        console.log('1---')
+        
+        // console.log('1---')
+      },
+      methods: {
+        submitChange () {
+          console.log('---')
+        }
       }
     })
+    
+
     // var parent = Vue.extend({
     //   data: function () {
     //     return {

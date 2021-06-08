@@ -2050,6 +2050,9 @@
         _resolve(ctx);
       }
     });
+    // 判断队列是否等待刷新状态
+    // 这样做的目的是在代码中可能会连续多次调用nextTick，此时将所有的回调都放到callbacks数组中，待所有nextTick执行完成后，再执行timerFunc中的微任务
+    // pending的作用是，当有多个nextTick调用时，只执行一次调用微任务的方法
     if (!pending) {
       pending = true;
       timerFunc();
@@ -2193,6 +2196,7 @@
     if ((!isA && !isObject(val)) || Object.isFrozen(val) || val instanceof VNode) {
       return
     }
+    // 防止循环引用
     if (val.__ob__) {
       var depId = val.__ob__.dep.id;
       if (seen.has(depId)) {
@@ -2200,6 +2204,7 @@
       }
       seen.add(depId);
     }
+    // 无论是数组还是对象，都会遍历调用val[i]或者val[keys[i]],这两个操作会触发get方法，收集依赖
     if (isA) {
       i = val.length;
       while (i--) { _traverse(val[i], seen); }
@@ -4549,6 +4554,7 @@
       // "touch" every property so they are all tracked as
       // dependencies for deep watching
       if (this.deep) {
+        // 如果实行对象是深度观察
         traverse(value);
       }
       popTarget();//将当前target弹出，下次属性值改变的时候，会出发get
@@ -4850,6 +4856,7 @@
 
       if (!isSSR) {
         // create internal watcher for the computed property.
+        // 非服务端渲染，创建一个观察者实例
         watchers[key] = new Watcher(
           vm,
           getter || noop,
@@ -4878,7 +4885,8 @@
     key,
     userDef
   ) {
-    var shouldCache = !isServerRendering();
+    var shouldCache = !isServerRendering();  //非服务端渲染
+    // 设置计算属性的get、set方法
     if (typeof userDef === 'function') {
       sharedPropertyDefinition.get = shouldCache
         ? createComputedGetter(key)
@@ -4976,6 +4984,7 @@
       options = handler;
       handler = handler.handler;
     }
+    // 使用methods中的同名方法
     if (typeof handler === 'string') {
       handler = vm[handler];
     }
@@ -5019,8 +5028,10 @@
         return createWatcher(vm, expOrFn, cb, options)
       }
       options = options || {};
-      options.user = true;
+      options.user = true;   //标识是用户创建的实例对象
+      // 此处的expOrFn是一个key,watcher内会对expOrFn进行判断，如果expOrFn是一个字符串，会对expOrFn进行求值，求值时会出发该属性的getter
       var watcher = new Watcher(vm, expOrFn, cb, options);
+      // 如果属性或者函数被监听后立即执行回调
       if (options.immediate) {
         try {
           cb.call(vm, watcher.value);
@@ -5029,6 +5040,7 @@
         }
       }
       return function unwatchFn () {
+        // 解除观察者
         watcher.teardown();
       }
     };
